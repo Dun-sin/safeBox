@@ -1,0 +1,29 @@
+[
+	{
+		"name": "Rule 1",
+		"label": "35/25/40 Rule",
+		"segments": [
+			{ "label": "Save", "amount": 0.35, "color": "#177AD5" },
+			{ "label": "Invest", "amount": 0.25, "color": "#79D2DE" },
+			{ "label": "Spend", "amount": 0.4, "color": "#ED6665" }
+		]
+	},
+	{
+		"name": "Rule 2",
+		"label": "40/30/30 Rule",
+		"segments": [
+			{ "label": "Vacation", "amount": 0.4, "color": "#F53D3D" },
+			{ "label": "Education", "amount": 0.3, "color": "#79D2DE" },
+			{ "label": "Entertainment", "amount": 0.3, "color": "#ED6665" }
+		]
+	},
+	{
+		"name": "Rule 3",
+		"label": "50/20/30 Rule",
+		"segments": [
+			{ "label": "Emergency Fund", "amount": 0.5, "color": "#610505" },
+			{ "label": "Investment", "amount": 0.2, "color": "#79D2DE" },
+			{ "label": "Personal Development", "amount": 0.3, "color": "#177AD5" }
+		]
+	}
+]
