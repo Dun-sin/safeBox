@@ -8,8 +8,52 @@ permissions:
   contents: write
 
 jobs:
+  deploy_prod:
+    name: Deploy To Production
+    runs-on: ubuntu-latest
+    outputs:
+      releaseChannel: ${{ steps.releaseChannel.outputs.releaseChannel }}
+      latestBinaryVersion: ${{ steps.latestBinaryVersion.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Fetch Tags
+        run: |
+          git fetch --prune --unshallow --tags -f
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - uses: expo/expo-github-action@v5
+        with:
+          expo-packager: npm
+          expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
+          expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
+          expo-cache: true
+      - uses: rlespinasse/github-slug-action@v2.x
+      - name: Generate Release Channel # Release Channels are named prod-<Major Release>, i.e. prod-1, prod-3
+        id: releaseChannel
+        run: |
+          RELEASE_CHANNEL=$(echo ${{ env.GITHUB_REF_SLUG }} | sed -r 's/\.[0-9]+\.[0-9]+$//')
+          echo "::set-output name=releaseChannel::$RELEASE_CHANNEL"
+      - name: Install Packages
+        run: npm install
+      - name: Get Latest Binary Version # Binary Version will be x.x.x based on the latest tag
+        id: latestBinaryVersion
+        run: |
+          # Release tag finds the lastest tag in the tree branch - i.e. prod-x.x.x
+          RELEASE_TAG=$(echo $(git describe --tags --abbrev=0))
+          # Using param substitution, we output x.x.x instead
+          echo "::set-output name=version::${RELEASE_TAG#*-}"
+      - name: Echo Version Details
+        run: |
+          echo Build number is $GITHUB_RUN_NUMBER
+          echo Latest release is ${{ steps.latestBinaryVersion.outputs.version }}
+      - name: Expo Publish Channel
+        run: expo publish --non-interactive --release-channel=${{ steps.releaseChannel.outputs.releaseChannel }}
   create_release_and_build_android:
     runs-on: ubuntu-latest
+    needs: deploy_prod
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
