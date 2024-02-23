@@ -46,6 +46,7 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
           name: Release ${{ steps.create_tag.outputs.tag }}
+          tag: ${{ steps.create_tag.outputs.tag }}
           allowUpdates: true
 
       - name: Build Android Release
@@ -70,6 +71,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./example-${{ steps.create_tag.outputs.tag }}.apk
-          asset_name: example-${{ steps.create_tag.outputs.tag }}.apk
+          file: ./safebox-${{ steps.create_tag.outputs.tag }}.apk
+          asset_name: safebox-${{ steps.create_tag.outputs.tag }}.apk
           tag: ${{ steps.create_tag.outputs.tag }}
