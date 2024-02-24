@@ -106,12 +106,12 @@ jobs:
       - name: Parse Asset URL
         id: androidUrl
         run: |
-          ASSET_URL=$(cat buildLogAndroid.txt | tail | egrep -o 'https?://expo\.io/artifacts/[^ ]+')
+          ASSET_URL=$(cat buildLogAndroid.txt | tail | egrep -o 'https?://expo\.dev/artifacts/[^ ]+')
           echo The android url is $ASSET_URL
           echo "::set-output name=assetUrl::$ASSET_URL"
 
       - name: Download APK Asset
-        run: wget -O example-${{ steps.create_tag.outputs.tag }}.apk ${{ steps.androidUrl.outputs.assetUrl }}
+        run: wget -O safebox-${{ steps.create_tag.outputs.tag }}.apk ${{ steps.androidUrl.outputs.assetUrl }}
 
       - name: Upload Release Asset
         uses: svenstaro/upload-release-action@v2
