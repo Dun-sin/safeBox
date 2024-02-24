@@ -100,7 +100,7 @@ jobs:
           APP_BUILD_VERSION: ${{ github.run_number }}
           APP_BINARY_VERSION: ${{ needs.deploy_prod.outputs.latestBinaryVersion }}
         run: |
-          eas build --non-interactive -p android --profile preview > buildlog.txt
+          eas build --non-interactive -p android --profile preview > buildLogAndroid.txt
           cat buildLogAndroid.txt
 
       - name: Parse Asset URL
