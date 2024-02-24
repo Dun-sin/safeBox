@@ -24,12 +24,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - uses: expo/expo-github-action@v5
-        with:
-          expo-packager: npm
-          expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
-          expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
-          expo-cache: true
       - uses: rlespinasse/github-slug-action@v2.x
       - name: Generate Release Channel # Release Channels are named prod-<Major Release>, i.e. prod-1, prod-3
         id: releaseChannel
@@ -91,6 +85,15 @@ jobs:
           name: Release ${{ steps.create_tag.outputs.tag }}
           tag: ${{ steps.create_tag.outputs.tag }}
           allowUpdates: true
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build Android Release
         env:
