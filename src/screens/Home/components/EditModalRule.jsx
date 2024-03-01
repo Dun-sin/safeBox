@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { calculateLabel, calculateMaxAmount, isEmptyObject } from '../../../utils/lib';
 
-import { AppContext } from '../../../../App';
+import { AppContext } from '../../../context/AppContext';
 import { rulesCollectionName } from '../../../services/InitializedDB';
 import { useState } from 'react';
 

@@ -3,7 +3,7 @@ import { StyleSheet, Text, ToastAndroid, View } from 'react-native'
 import { isConvertibleToNumber, saveSetting } from '../../utils/lib'
 import { useContext, useEffect, useState } from 'react'
 
-import { AppContext } from '../../../App'
+import AppContext from '../../context/AppContext'
 import ScreenWrapper from '../../components/ScreenWrapper'
 import { settingsCollectionName } from '../../services/InitializedDB'
 
@@ -61,7 +61,7 @@ export default function Settings() {
 
 
   return (
-    <ScreenWrapper>
+    <ScreenWrapper title='Settings'>
       <View style={container}>
         <Text>Anything added here will be automatically used for the future, saving you the hassle of inputting it every time!</Text>
         <View>

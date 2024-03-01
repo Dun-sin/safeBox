@@ -1,10 +1,10 @@
 import { Button, Text } from 'react-native-paper';
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
-import { Image, StyleSheet, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
+import { FlatList, Image, StyleSheet, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react'
 import { rulesCollectionName, settingsCollectionName } from '../../services/InitializedDB';
 
-import { AppContext } from '../../../App';
+import AppContext from '../../context/AppContext';
 import CustomModal from '../../components/CustomModal';
 import EditRuleModal from './components/EditModalRule';
 import { PieChart } from "react-native-gifted-charts";
@@ -96,7 +96,6 @@ const Home = () => {
     fetchRules();
   }, [db]);
 
-
   return (
     <ScreenWrapper>
       <View style={container}>
@@ -134,22 +133,26 @@ const Home = () => {
               <Entypo name={isOpen ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
             </View>
           </TouchableWithoutFeedback>
-          {isOpen && rules && <View style={ruleStyleContainer}>
-            {rules.map(value => (
-              <View key={value.name} style={ruleStyle}>
-                <Text style={ruleStyleText}>{value.label}</Text>
+          {isOpen && rules &&
+            <FlatList
+              data={rules}
+              contentContainerStyle={ruleStyleContainer}
+              renderItem={({ item }) => <View key={item.name} style={ruleStyle}>
+                <Text style={ruleStyleText}>{item.label}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <TouchableWithoutFeedback onPress={() => openModal(value.name)}>
+                  <TouchableWithoutFeedback onPress={() => openModal(item.name)}>
                     <FontAwesome6 name="pen" size={14} color="#610505" />
                   </TouchableWithoutFeedback>
                   <Button
                     mode='contained'
-                    onPress={() => getChart(value.name)}
-                    buttonColor='#f53d3d'>Apply</Button>
+                    onPress={() => getChart(item.name)}
+                    buttonColor='#f53d3d'
+                  >Apply</Button>
                 </View>
-              </View>
-            ))}
-          </View>}
+              </View>}
+
+            />
+          }
         </View>
       </View>
       {editingRule && (<
@@ -197,14 +200,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     gap: 10,
-    marginTop: 50
   },
   allocationContainer: {
     backgroundColor: '#FA9E9E',
     padding: 10,
     borderRadius: 10,
     maxHeight: '40%',
-    overflow: 'scroll'
   },
   allocation: {
     flexDirection: 'row',
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 17
   },
   ruleStyleContainer: {
-    gap: 3.5,
-    paddingHorizontal: 10
+    gap: 6,
+    paddingHorizontal: 12
   }
 })

@@ -1,8 +1,9 @@
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import AppContext from './src/context/AppContext';
 import { Entypo } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import History from './src/screens/History';
+// import { FontAwesome } from '@expo/vector-icons';
+// import History from './src/screens/History';
 import Home from './src/screens/Home';
 import { Ionicons } from '@expo/vector-icons';
 import { LogBox } from 'react-native';
@@ -13,8 +14,6 @@ import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navig
 import initializeDB from './src/services/InitializedDB';
 
 const Tab = createMaterialBottomTabNavigator()
-
-export const AppContext = createContext({})
 
 LogBox.ignoreLogs(['Possible Unhandled Promise Rejection'])
 
@@ -37,7 +36,7 @@ export default function App() {
             backBehavior='history'
             inactiveColor='#0A0101'
             activeColor='#F53D3D'
-            barStyle={{ backgroundColor: '#FFFAFA' }}
+            barStyle={{ backgroundColor: '#FFFAFA', position: 'absolute' }}
             shifting
           >
             <Tab.Screen
