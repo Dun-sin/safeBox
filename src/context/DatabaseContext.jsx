@@ -12,6 +12,7 @@ export const DatabaseProvider = ({ children }) => {
 
   useEffect(() => {
     (async () => {
+      if (!db) return
       await storeData(db)
     })()
   }, [db])

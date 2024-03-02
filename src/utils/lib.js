@@ -83,7 +83,7 @@ const initialState = {
 
 export const getData = async () => {
 	try {
-		const jsonValue = await AsyncStorage.getItem('data');
+    const jsonValue = await AsyncStorage.getItem('data');
 		const db = jsonValue !== 'null' ? JSON.parse(jsonValue) : initialState;
 
 		return db;
