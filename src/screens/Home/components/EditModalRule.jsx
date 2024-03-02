@@ -1,17 +1,18 @@
 import { Button, Text, TextInput } from 'react-native-paper';
-import React, { useContext } from 'react';
 import { StyleSheet, ToastAndroid, View } from 'react-native';
 import { calculateLabel, calculateMaxAmount, isEmptyObject } from '../../../utils/lib';
 
-import { AppContext } from '../../../context/AppContext';
-import { rulesCollectionName } from '../../../services/InitializedDB';
+import { EDIT_RULE } from '../../../reducers/DatabaseReducer';
+import React from 'react';
+import { useDatabase } from '../../../context/DatabaseContext';
 import { useState } from 'react';
 
 const EditRuleModal = ({ hideModal, rule }) => {
+  const { dispatch } = useDatabase()
   const [newRule, setNewRule] = useState(rule);
 
-  const { db } = useContext(AppContext)
 
+  const editRule = (name, changes) => dispatch({ type: EDIT_RULE, payload: { name, changes } });
 
   const handleUpdate = async () => {
     if (!newRule || isEmptyObject(newRule)) return
@@ -21,7 +22,8 @@ const EditRuleModal = ({ hideModal, rule }) => {
         ToastAndroid.show('Total number of all segments of the rule must equal to 1', ToastAndroid.LONG)
         return
       }
-      await db[rulesCollectionName].upsert({ ...newRule, label: calculateLabel(newRule.segments) })
+
+      editRule(rule.name, { ...newRule, label: calculateLabel(newRule.segments) })
 
       hideModal()
       ToastAndroid.show('Updated Successfully', ToastAndroid.TOP)

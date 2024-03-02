@@ -1,23 +1,21 @@
 import { Button, TextInput } from 'react-native-paper'
 import { StyleSheet, Text, ToastAndroid, View } from 'react-native'
-import { isConvertibleToNumber, saveSetting } from '../../utils/lib'
-import { useContext, useEffect, useState } from 'react'
 
-import AppContext from '../../context/AppContext'
+import { SET_SETTINGS } from '../../reducers/DatabaseReducer'
 import ScreenWrapper from '../../components/ScreenWrapper'
-import { settingsCollectionName } from '../../services/InitializedDB'
+import { isConvertibleToNumber } from '../../utils/lib'
+import { useDatabase } from '../../context/DatabaseContext';
+import { useState } from 'react'
 
 export default function Settings() {
   const { container } = styles;
-  const { db } = useContext(AppContext);
 
   const [local, setLocal] = useState({ basic: 0, income: 0 });
-  const [settings, setSettings] = useState({});
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
+  const { db, dispatch } = useDatabase()
+  const settings = db.settings
 
+  const setSettings = (settings) => dispatch({ type: SET_SETTINGS, payload: settings });
   const handleBasicChange = async (amount) => {
     if (isConvertibleToNumber(amount)) {
       setLocal({ ...local, basic: +amount });
@@ -36,26 +34,11 @@ export default function Settings() {
 
   const handleSubmit = async () => {
     try {
-      Object.entries(local).forEach(async ([key, value]) => {
-        await saveSetting(db, key, value);
-      });
+      setSettings(local)
 
       ToastAndroid.show('Updated Successfully', ToastAndroid.SHORT)
-      fetchSettings()
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const fetchSettings = async () => {
-    if (db[settingsCollectionName]) {
-      db[settingsCollectionName].find().$.subscribe((setting) => {
-        const formattedSettings = setting.reduce((acc, curr) => {
-          acc[curr.key] = curr.value;
-          return acc;
-        }, {})
-        setSettings(formattedSettings);
-      });
     }
   };
 

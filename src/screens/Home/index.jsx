@@ -1,16 +1,15 @@
 import { Button, Text } from 'react-native-paper';
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import { FlatList, Image, StyleSheet, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react'
-import { rulesCollectionName, settingsCollectionName } from '../../services/InitializedDB';
+import React, { useState } from 'react'
+import { createSentenceFromSegments, isEmptyObject } from '../../utils/lib';
 
-import AppContext from '../../context/AppContext';
 import CustomModal from '../../components/CustomModal';
 import EditRuleModal from './components/EditModalRule';
 import { PieChart } from "react-native-gifted-charts";
 import PlaceHolderImage from '../../../assets/images/undraw_Revenue_re_2bmg.png'
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { isEmptyObject } from '../../utils/lib';
+import { useDatabase } from '../../context/DatabaseContext'
 
 const Home = () => {
   const { pieInfoTextContainer, pieInfoContainer, allocationContainer, container, pieContainer, allocation, allocationText, imageStyle, ruleStyle, ruleStyleContainer, ruleStyleText, incomeContainer, income, incomeTitle } = styles
@@ -22,17 +21,16 @@ const Home = () => {
   const hideModal = () => setModalVisible(false);
   const showModal = () => setModalVisible(true);
 
-  const [settings, setSettings] = useState({});
-  const [rules, setRules] = useState([])
   const [chart, setChart] = useState({})
   const [editingRule, setEditingRule] = useState(null)
 
-  const { db } = useContext(AppContext)
+  const { db } = useDatabase()
+  const settings = db.settings
+  const rules = db.rules
 
   const handleOnPress = () => {
     setIsOpen(!isOpen)
   }
-
 
   const getChart = (clickedRule) => {
     const income = settings.income ? +settings.income : 0
@@ -70,31 +68,6 @@ const Home = () => {
     setEditingRule({ label: rule.label, name: rule.name, segments: rule.segments })
     showModal()
   }
-
-  useEffect(() => {
-    const fetchRules = async () => {
-      if (db[rulesCollectionName]) {
-        db[rulesCollectionName].find().$.subscribe((rule) => {
-          setRules(rule);
-        });
-      }
-
-      if (db[settingsCollectionName]) {
-        const subscription = db[settingsCollectionName]
-          .find()
-          .$.subscribe((settings) => {
-            const formattedSettings = settings.reduce((acc, curr) => {
-              acc[curr.key] = curr.value;
-              return acc;
-            }, {});
-            setSettings(formattedSettings);
-          });
-
-        return () => subscription.unsubscribe();
-      }
-    };
-    fetchRules();
-  }, [db]);
 
   return (
     <ScreenWrapper>
@@ -137,8 +110,12 @@ const Home = () => {
             <FlatList
               data={rules}
               contentContainerStyle={ruleStyleContainer}
-              renderItem={({ item }) => <View key={item.name} style={ruleStyle}>
-                <Text style={ruleStyleText}>{item.label}</Text>
+            renderItem={({ item }) => {
+              return <View key={item.name} style={ruleStyle}>
+                <View style={{ width: '65%' }}>
+                  <Text style={ruleStyleText}>{item.label}</Text>
+                  <Text ellipsizeMode='tail' numberOfLines={1} style={[ruleStyleText, { fontSize: 12 }]}>{createSentenceFromSegments(item)}</Text>
+                </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                   <TouchableWithoutFeedback onPress={() => openModal(item.name)}>
                     <FontAwesome6 name="pen" size={14} color="#610505" />
@@ -149,7 +126,8 @@ const Home = () => {
                     buttonColor='#f53d3d'
                   >Apply</Button>
                 </View>
-              </View>}
+              </View>
+            }}
 
             />
           }
@@ -198,25 +176,27 @@ const styles = StyleSheet.create({
     padding: 8
   },
   container: {
-    padding: 20,
+    paddingTop: 2,
     gap: 10,
   },
   allocationContainer: {
     backgroundColor: '#FA9E9E',
     padding: 10,
     borderRadius: 10,
-    maxHeight: '40%',
+    height: 'auto',
+    width: 'auto',
+    maxWidth: '100%'
   },
   allocation: {
     flexDirection: 'row',
     gap: 5,
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   allocationText: {
     fontSize: 18,
-    color: '#0A0101',
+    color: '#FFFAFA',
     fontWeight: 'bold'
   },
   imageStyle: {
@@ -227,12 +207,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    maxWidth: '100%'
   },
   ruleStyleText: {
-    fontSize: 17
+    fontSize: 17,
   },
   ruleStyleContainer: {
     gap: 6,
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
   }
 })

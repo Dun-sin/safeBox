@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 23
   },
   childrenStyle: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
     height: RPH(100)
   }
 })
