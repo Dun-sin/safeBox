@@ -93,7 +93,7 @@ const Home = () => {
           {!isEmptyObject(chart) && <View style={pieInfoContainer}>
             {chart.map((value, i) => {
               return <View key={i} style={{ ...pieInfoTextContainer, backgroundColor: value.color }}>
-                <Text style={{ color: '#FFFAFA' }}>{value.label}</Text>
+                <Text style={{ color: '#FFFAFA', fontWeight: '800' }}>{value.label}</Text>
                 <Text style={{ color: '#FFFAFA' }}>{value.value}</Text>
               </View>
             })}
@@ -103,7 +103,7 @@ const Home = () => {
           <TouchableWithoutFeedback onPress={handleOnPress}>
             <View style={allocation}>
               <Text style={allocationText}>Income Allocation Rules</Text>
-              <Entypo name={isOpen ? 'chevron-up' : 'chevron-down'} size={20} color="black" />
+              <Entypo name={isOpen ? 'chevron-up' : 'chevron-down'} size={20} color="#FFFAFA" />
             </View>
           </TouchableWithoutFeedback>
           {isOpen && rules &&
@@ -128,7 +128,6 @@ const Home = () => {
                 </View>
               </View>
             }}
-
             />
           }
         </View>
@@ -163,21 +162,29 @@ const styles = StyleSheet.create({
   },
   pieContainer: {
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    gap: 5
   },
   pieInfoContainer: {
-    width: '70%'
+    flexDirection: 'row',
+    gap: 10,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   pieInfoTextContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
     borderRadius: 5,
-    padding: 8
+    padding: 10,
+    gap: 20,
+    width: 'fit-content'
   },
   container: {
     paddingTop: 2,
-    gap: 10,
+    gap: 20,
   },
   allocationContainer: {
     backgroundColor: '#FA9E9E',
@@ -211,6 +218,7 @@ const styles = StyleSheet.create({
   },
   ruleStyleText: {
     fontSize: 17,
+    color: '#FFFAFA'
   },
   ruleStyleContainer: {
     gap: 6,
